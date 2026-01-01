@@ -2,7 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:in_app_purchase_platform_interface/src/types/product_details.dart';
 import 'package:patatoche_v2/constants/color_constants.dart';
+import 'package:patatoche_v2/constants/string_constants.dart';
+import 'package:patatoche_v2/enums/view_state.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/provider/membership_plan_provider.dart';
 import 'package:patatoche_v2/view/base_view.dart';
@@ -17,6 +20,9 @@ class MembershipPlanView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseView<MembershipPlanProvider>(
+      onModelReady: (provider) async {
+        await provider.loadProducts();
+      },
       builder: (context, provider, _) => Scaffold(
         body: Container(
           decoration: BoxDecoration(
@@ -38,59 +44,33 @@ class MembershipPlanView extends StatelessWidget {
                 ).medium(fontSize: 20.sp, color: ColorConstants.color363636),
               ),
               SizedBox(height: 4.h),
+
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.only(
-                    left: 20.w,
-                    right: 20.w,
-                    bottom: 32.h,
-                  ),
-                  shrinkWrap: true,
-                  children: [
-                    _planItemBuilder(
-                      context,
-                      title: 'starter'.tr(),
-                      subtitle: 'perfect_to_get_started'.tr(),
-                      borderColor: Theme.of(context).primaryColor,
-                      headerColors: [
-                        ColorConstants.colorFFF0DB,
-                        ColorConstants.colorFFFFFF.withValues(alpha: .8),
-                      ],
-                      primaryColor: Theme.of(context).primaryColor,
-                      showBorder: true,
-                      price: 'free'.tr(),
-                      type: 0,
-                    ),
-                    SizedBox(height: 20),
-                    _planItemBuilder(
-                      context,
-                      title: 'comfort'.tr(),
-                      subtitle: 'for_special_moments'.tr(),
-                      borderColor: ColorConstants.color8C9764,
-                      headerColors: [
-                        ColorConstants.colorDBE3BD,
-                        ColorConstants.colorFFFFFF.withValues(alpha: .8),
-                      ],
-                      primaryColor: ColorConstants.color8C9764,
-                      price: '\$100',
-                      type: 1,
-                    ),
-                    SizedBox(height: 20),
-                    _planItemBuilder(
-                      context,
-                      title: 'suprama'.tr(),
-                      subtitle: 'unlimited_memories'.tr(),
-                      borderColor: ColorConstants.colorDE917D,
-                      headerColors: [
-                        ColorConstants.colorFFEBE5,
-                        ColorConstants.colorFFFFFF.withValues(alpha: .8),
-                      ],
-                      primaryColor: ColorConstants.colorDE917D,
-                      price: '\$200',
-                      type: 2,
-                    ),
-                  ],
-                ),
+                child: provider.state == ViewState.busy
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.separated(
+                        padding: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          bottom: 32.h,
+                        ),
+                        shrinkWrap: true,
+
+                        itemBuilder: (BuildContext context, int index) {
+                          return _planItemBuilder(
+                            context,
+                            provider.products[index],
+                            provider,
+                            showBorder:
+                                provider.selectedPlan ==
+                                provider.products[index].id,
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(height: 20.h);
+                        },
+                        itemCount: provider.products.length,
+                      ),
               ),
             ],
           ),
@@ -100,24 +80,23 @@ class MembershipPlanView extends StatelessWidget {
   }
 
   _planItemBuilder(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required Color borderColor,
-    required Color primaryColor,
-    required List<Color> headerColors,
+    BuildContext context,
+    ProductDetails product,
+    MembershipPlanProvider provider, {
     bool showBorder = false,
-    required String price,
-    required int type,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: ColorConstants.colorFFFFFF,
-        border: showBorder ? Border.all(color: borderColor) : null,
+        border: showBorder
+            ? Border.all(color: provider.getPlanColor(context, product.id))
+            : null,
         borderRadius: BorderRadius.circular(22.r),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withValues(alpha: .15),
+            color: provider
+                .getPlanColor(context, product.id)
+                .withValues(alpha: .15),
             offset: Offset(0, 4),
             spreadRadius: 0,
             blurRadius: 32.r,
@@ -137,7 +116,7 @@ class MembershipPlanView extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: headerColors,
+                colors: provider.getHeaderColors(context, product.id),
               ),
             ),
 
@@ -154,19 +133,22 @@ class MembershipPlanView extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: primaryColor,
+                    color: provider.getPlanColor(context, product.id),
                   ),
                   child: ImageView(path: AssetsResource.icDiamond, width: 19.w),
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  title,
+                  product.title,
                 ).medium(fontSize: 18.sp, color: ColorConstants.color000000),
                 Text(
                   ' - ',
                 ).regular(fontSize: 14.sp, color: ColorConstants.color000000),
 
-                Text(subtitle).regular(fontSize: 14.sp, color: primaryColor),
+                Text(provider.getSubtitle(product.id)).regular(
+                  fontSize: 14.sp,
+                  color: provider.getPlanColor(context, product.id),
+                ),
               ],
             ),
           ),
@@ -176,21 +158,25 @@ class MembershipPlanView extends StatelessWidget {
             shrinkWrap: true,
             children: [
               _featureTile(
-                '${type == 0
+                '${product.id == StringConstants.free
                     ? '3'
-                    : type == 1
+                    : product.id == StringConstants.basic
                     ? '10'
                     : 'unlimited'.tr()}  ${'photos'.tr()}',
-                primaryColor,
+                provider.getPlanColor(context, product.id),
               ),
               _featureTile(
-
-                  '${type == 0
-                      ? '1'
-                      : type == 1
-                      ? '3'
-                      : 'unlimited'.tr()}  ${'video'.tr()}', primaryColor),
-              _featureTile('1 ${'audio_playlist'.tr()}', primaryColor),
+                '${product.id == StringConstants.free
+                    ? '1'
+                    : product.id == StringConstants.basic
+                    ? '3'
+                    : 'unlimited'.tr()}  ${'video'.tr()}',
+                provider.getPlanColor(context, product.id),
+              ),
+              _featureTile(
+                '1 ${'audio_playlist'.tr()}',
+                provider.getPlanColor(context, product.id),
+              ),
             ],
           ),
           Container(
@@ -205,34 +191,51 @@ class MembershipPlanView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  price,
+                  product.id == StringConstants.free
+                      ? 'free'.tr()
+                      : product.price,
                 ).regular(fontSize: 28.sp, color: ColorConstants.color000000),
 
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 4.h,
+                Visibility(
+                  visible: showBorder,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.r),
+                      color: provider
+                          .getPlanColor(context, product.id)
+                          .withValues(alpha: .25),
+                    ),
+                    child: Text('current_plan'.tr()).medium(
+                      fontSize: 14.sp,
+                      color: provider.getPlanColor(context, product.id),
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.r),
-                    color: primaryColor.withValues(alpha: .25),
-                  ),
-                  child: Text(
-                    'current_plan'.tr(),
-                  ).medium(fontSize: 14.sp, color: primaryColor),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 24.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: PrimaryButton(
-              width: 1.sw,
-              height: 44.h,
-              color: primaryColor,
-              title: 'buy'.tr(),
-              onClick: () {},
+          Visibility(
+            visible: product.id != StringConstants.free,
+            child: Column(
+              children: [
+                SizedBox(height: 24.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: PrimaryButton(
+                    width: 1.sw,
+                    height: 44.h,
+                    color: provider.getPlanColor(context, product.id),
+                    title: 'buy'.tr(),
+                    onClick: () async {
+                      await provider.buyProduct(context, product);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 24.h),

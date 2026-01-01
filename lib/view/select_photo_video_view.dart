@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/provider/select_photo_video_provider.dart';
 import 'package:patatoche_v2/view/base_view.dart';
-import 'package:patatoche_v2/view/delete_view.dart';
+import 'package:patatoche_v2/widgets/common_dialog_view.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 import 'package:patatoche_v2/widgets/primary_button.dart';
 import 'package:reorderable_grid/reorderable_grid.dart';
@@ -84,9 +84,7 @@ class SelectPhotoVideoView extends StatelessWidget {
                       offset: Offset(0, 5),
                       blurRadius: 11.r,
                       spreadRadius: 0,
-                      color: ColorConstants.color000000.withValues(
-                        alpha: .05,
-                      ),
+                      color: ColorConstants.color000000.withValues(alpha: .05),
                     ),
                   ],
                 ),
@@ -283,9 +281,13 @@ class SelectPhotoVideoView extends StatelessWidget {
                     context: context,
                     isDismissible: true,
                     enableDrag: true,
-                    child: DeleteView(
+                    child: CommonDialogView(
                       title: 'delete_photo'.tr(),
                       subTitle: 'are_you_sure_you'.tr(),
+                      icon: AssetsResource.icDelete2,
+                      okayButtonText: 'delete'.tr(),
+                      okayButtonClick: () {},
+                      okayTextColor: ColorConstants.colorD1270B, okayButtonColor: ColorConstants.colorFFECEC, okayButtonBorderColor: ColorConstants.colorFFE3DE,
                     ),
                   );
                 },

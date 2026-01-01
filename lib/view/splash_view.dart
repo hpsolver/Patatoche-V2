@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/constants/assets_resource.dart';
 import 'package:video_player/video_player.dart';
+import '../helpers/shared_pref.dart';
 import '../routes.dart';
 
 class SplashView extends StatefulWidget {
@@ -13,10 +14,12 @@ class SplashView extends StatefulWidget {
 
 class SplashViewState extends State<SplashView> {
   late VideoPlayerController _controller;
+  int? userId;
 
   @override
   void initState() {
     super.initState();
+    userId = SharedPref.prefs?.getInt(SharedPref.userId);
     _controller = VideoPlayerController.asset(AssetsResource.splashVideo)
       ..initialize().then((_) {
         _controller.play();
@@ -29,7 +32,7 @@ class SplashViewState extends State<SplashView> {
       if (_controller.value.isInitialized &&
           !_controller.value.isPlaying &&
           _controller.value.duration == _controller.value.position) {
-        context.pushReplacement(AppPaths.introduction);
+        navigateToNextScreen();
       }
     });
   }
@@ -48,7 +51,7 @@ class SplashViewState extends State<SplashView> {
                         onTap: () {
                           if (_controller.value.isPlaying) {
                             _controller.pause();
-                            context.pushReplacement(AppPaths.introduction);
+                            navigateToNextScreen();
                           }
                         },
                         child: SizedBox(
@@ -65,6 +68,14 @@ class SplashViewState extends State<SplashView> {
             : const CircularProgressIndicator(),
       ),
     );
+  }
+
+  void navigateToNextScreen() {
+    if (userId != null && userId != 0) {
+      context.pushReplacement(AppPaths.dashboard);
+    } else {
+      context.pushReplacement(AppPaths.introduction);
+    }
   }
 
   @override

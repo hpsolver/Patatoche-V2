@@ -58,4 +58,5 @@ class AssetsResource {
   static const String icPlay = 'assets/icons/ic_play.svg';
   static const String icSuccess = 'assets/icons/ic_success.svg';
   static const String icDelete3 = 'assets/icons/ic_delete_3.svg';
+  static const String popupBg = 'assets/images/popup_bg.png';
 }

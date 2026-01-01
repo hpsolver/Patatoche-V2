@@ -5,17 +5,30 @@ import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/constants/assets_resource.dart';
 import 'package:patatoche_v2/constants/color_constants.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
-import 'package:patatoche_v2/routes.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 import 'package:patatoche_v2/widgets/primary_button.dart';
 
-import '../helpers/common_textfield.dart';
-
-class DeleteView extends StatelessWidget {
+class CommonDialogView extends StatelessWidget {
   final String title;
   final String subTitle;
+  final String icon;
+  final String okayButtonText;
+  final Color okayTextColor;
+  final Color okayButtonColor;
+  final Color okayButtonBorderColor;
+  final VoidCallback okayButtonClick;
 
-  const DeleteView({super.key, required this.title, required this.subTitle});
+  const CommonDialogView({
+    super.key,
+    required this.title,
+    required this.subTitle,
+    required this.icon,
+    required this.okayTextColor,
+    required this.okayButtonText,
+    required this.okayButtonClick,
+    required this.okayButtonColor,
+    required this.okayButtonBorderColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +60,7 @@ class DeleteView extends StatelessWidget {
                 ],
               ),
             ),
+            child: ImageView(path: AssetsResource.popupBg),
           ),
 
           Padding(
@@ -82,7 +96,10 @@ class DeleteView extends StatelessWidget {
                       width: 1.w,
                     ),
                   ),
-                  child: ImageView(path: AssetsResource.icDelete2),
+                  child: ImageView(
+                    path: icon,
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
                 SizedBox(height: 23.h),
                 Text(
@@ -107,7 +124,9 @@ class DeleteView extends StatelessWidget {
                         showBorder: true,
                         color: ColorConstants.colorFFFFFF,
                         textColor: ColorConstants.color000000,
-                        onClick: () {},
+                        onClick: () {
+                          context.pop();
+                        },
                       ),
                     ),
                     SizedBox(width: 18.w),
@@ -115,11 +134,11 @@ class DeleteView extends StatelessWidget {
                       child: PrimaryButton(
                         width: 1.sw,
                         showBorder: true,
-                        borderColor: ColorConstants.colorFFE3DE,
-                        color: ColorConstants.colorFFECEC,
-                        textColor: ColorConstants.colorD1270B,
-                        title: 'delete'.tr(),
-                        onClick: () {},
+                        borderColor: okayButtonBorderColor,
+                        color: okayButtonColor,
+                        textColor: okayTextColor,
+                        title: okayButtonText,
+                        onClick: okayButtonClick,
                       ),
                     ),
                   ],

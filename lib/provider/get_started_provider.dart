@@ -9,14 +9,14 @@ class GetStartedProvider extends BaseProvider {
   GetStartedProvider() {
     _googleSignIn.initialize(
       serverClientId:
-          '628952148794-ugv3q42v565suthi811hjd82utfgre88.apps.googleusercontent.com',
+          '628952148794-dpbld6ta31juio4s5gf2jice7udqaq7d.apps.googleusercontent.com',
     );
   }
 
   Future<void> googleSignIn() async {
     try {
       final user = await _googleSignIn.authenticate(
-        scopeHint: ['email', 'profile', 'openid'],
+        scopeHint: ['email', 'profile',],
       );
 
       debugPrint(user.displayName);

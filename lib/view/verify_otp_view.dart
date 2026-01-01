@@ -38,6 +38,9 @@ class VerifyOtpViewState extends State<VerifyOtpView> {
   @override
   Widget build(BuildContext context) {
     return BaseView<OtpProvider>(
+      onModelReady: (provider) {
+        provider.startResendTimer();
+      },
       builder: (context, provider, _) => Scaffold(
         appBar: CustomAppBar(
           centerTitle: true,
@@ -103,11 +106,22 @@ class VerifyOtpViewState extends State<VerifyOtpView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '00:24',
+                    provider.start.formatTime(),
                   ).medium(fontSize: 14.sp, color: ColorConstants.color363636),
-                  Text('resend'.tr()).medium(
-                    fontSize: 14.sp,
-                    color: Theme.of(context).primaryColor,
+                  Opacity(
+                    opacity: provider.canResend ? 1 : 0.7,
+                    child: GestureDetector(
+                      onTap: provider.canResend
+                          ? () {
+                              _otpController.clear();
+                              provider.resendOtp(context);
+                            }
+                          : null,
+                      child: Text('resend'.tr()).medium(
+                        fontSize: 14.sp,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -1,4 +1,4 @@
-package com.app.patatoche_v2
+package com.app.patatoche
 
 import io.flutter.embedding.android.FlutterActivity
 

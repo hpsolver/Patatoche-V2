@@ -12,7 +12,7 @@ import '../helpers/common_textfield.dart';
 import '../widgets/audio_wave_player.dart';
 import '../widgets/custom_bottom_sheet.dart';
 import '../widgets/image_view.dart';
-import 'delete_view.dart';
+import '../widgets/common_dialog_view.dart';
 
 class EditMemoryPage extends StatefulWidget {
   const EditMemoryPage({super.key});
@@ -339,9 +339,13 @@ class EditMemoryPageState extends State<EditMemoryPage> {
                     context: context,
                     isDismissible: true,
                     enableDrag: true,
-                    child: DeleteView(
+                    child: CommonDialogView(
                       title: 'delete_photo'.tr(),
                       subTitle: 'are_you_sure_you'.tr(),
+                      icon: AssetsResource.icDelete2,
+                      okayButtonText: 'delete'.tr(),
+                      okayButtonClick: () {},
+                      okayTextColor: ColorConstants.colorD1270B, okayButtonColor: ColorConstants.colorFFECEC, okayButtonBorderColor: ColorConstants.colorFFE3DE,
                     ),
                   );
                 },

@@ -26,10 +26,12 @@ class CommonTextField extends StatelessWidget {
   final double? borderRadius;
   final EdgeInsetsGeometry? contentPadding;
   final Function()? onTap;
+  final ValueChanged<String>? onFieldSubmitted;
   final TextInputAction textInputAction;
   final TextCapitalization textCapitalization;
   final String? Function(String? value)? validator;
   final TextAlign textAlign;
+
 
   const CommonTextField({
     super.key,
@@ -57,12 +59,15 @@ class CommonTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.validator,
     this.textAlign = TextAlign.start,
+    this.onFieldSubmitted
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       maxLines: maxLines,
+      onFieldSubmitted: onFieldSubmitted,
+      validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       inputFormatters: inputFormatters ?? [],
       keyboardType: keyboardType ?? TextInputType.text,
@@ -111,7 +116,7 @@ class CommonTextField extends StatelessWidget {
         errorBorder: errorBorder(borderRadius),
         contentPadding:
             contentPadding ??
-            EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
       ),
     );
   }

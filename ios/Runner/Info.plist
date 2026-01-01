@@ -22,10 +22,27 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.628952148794-1khn9phjb3k5l1crsns3ph030v19ortk</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>628952148794-1khn9phjb3k5l1crsns3ph030v19ortk.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NFCReaderUsageDescription</key>
+	<string>Patatoche uses the NFC to read the tags.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone for audio-related features.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -45,20 +62,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>This app uses the microphone for audio-related features.</string>
-    <key>CFBundleURLTypes</key>
-    <array>
-     <dict>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-       <string>com.googleusercontent.apps.628952148794-1khn9phjb3k5l1crsns3ph030v19ortk</string>
-      </array>
-     </dict>
-    </array>
-    <key>GIDClientID</key>
-    <string>628952148794-1khn9phjb3k5l1crsns3ph030v19ortk.apps.googleusercontent.com</string>
 </dict>
 </plist>

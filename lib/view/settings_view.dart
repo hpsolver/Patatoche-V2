@@ -11,6 +11,9 @@ import 'package:patatoche_v2/routes.dart';
 import 'package:patatoche_v2/view/base_view.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 
+import '../widgets/common_dialog_view.dart';
+import '../widgets/custom_bottom_sheet.dart';
+
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
@@ -79,24 +82,46 @@ class SettingsView extends StatelessWidget {
                   },
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 13.h),
-                margin: EdgeInsets.symmetric(horizontal: 22.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(11.r),
-                  color: ColorConstants.colorFFE6E0,
-                  border: Border.all(color: ColorConstants.colorFABFB0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ImageView(path: AssetsResource.icLogout),
-                    SizedBox(width: 10.w),
-                    Text('logout'.tr()).medium(
-                      fontSize: 16.sp,
-                      color: ColorConstants.colorE74A4A,
+              GestureDetector(
+                onTap: () {
+                  CustomBottomSheet.show(
+                    context: context,
+                    isDismissible: true,
+                    enableDrag: true,
+                    child: CommonDialogView(
+                      title: 'logout_'.tr(),
+                      subTitle: 'are_you_sure_you_want_to_logout'.tr(),
+                      icon: AssetsResource.icLogout,
+                      okayButtonText: 'yes'.tr(),
+                      okayButtonClick: () {
+                        context.pop();
+                        provider.logout(context);
+                      },
+                      okayTextColor: ColorConstants.colorFFFFFF,
+                      okayButtonColor: Theme.of(context).primaryColor,
+                      okayButtonBorderColor: Theme.of(context).primaryColor,
                     ),
-                  ],
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 13.h),
+                  margin: EdgeInsets.symmetric(horizontal: 22.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(11.r),
+                    color: ColorConstants.colorFFE6E0,
+                    border: Border.all(color: ColorConstants.colorFABFB0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ImageView(path: AssetsResource.icLogout),
+                      SizedBox(width: 10.w),
+                      Text('logout'.tr()).medium(
+                        fontSize: 16.sp,
+                        color: ColorConstants.colorE74A4A,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

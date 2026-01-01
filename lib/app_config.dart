@@ -14,9 +14,9 @@ class AppConfig {
   static String get baseUrl {
     switch (environment) {
       case AppEnvironment.prod:
-        return 'https://backend.cc.shiald.com/';
+        return 'https://www.patatoche.com/wp-json/patatoche/v2/';
       case AppEnvironment.dev:
-        return 'https://backend.cc.shiald.com/';
+        return 'https://www.dev.patatoche.com/wp-json/patatoche/v2/';
     }
   }
 }

@@ -82,7 +82,7 @@ class HomeView extends StatelessWidget {
               ),
 
               Expanded(
-                child: /*_emptyWidget(context)*/ _patatocheWidget(context),
+                child: /*_emptyWidget(context)*/ _patatocheWidget(context,provider),
               ),
             ],
           ),
@@ -176,7 +176,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _patatocheWidget(BuildContext context) {
+  Widget _patatocheWidget(BuildContext context, HomeProvider provider) {
     return Column(
       children: [
         SizedBox(height: 8.h),
@@ -198,8 +198,12 @@ class HomeView extends StatelessWidget {
                       height: 34.h,
                       title: 'add_new'.tr(),
                       fontSize: 14.sp,
-                      onClick: () {
-                        context.pushNamed(AppPaths.createMemory);
+                      onClick: () async {
+
+
+                     await   provider.readNfcTag(context);
+
+
                       },
                     ),
                   ],
@@ -227,7 +231,7 @@ class HomeView extends StatelessWidget {
 
   _itemBuilder(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         context.pushNamed(AppPaths.editMemory);
       },
       child: Container(
@@ -271,13 +275,16 @@ class HomeView extends StatelessWidget {
                             offset: Offset(0, 3),
                             blurRadius: 5.r,
                             spreadRadius: 0,
-                            color: ColorConstants.color000000.withValues(alpha: .25),
+                            color: ColorConstants.color000000.withValues(
+                              alpha: .25,
+                            ),
                           ),
                         ],
                       ),
-                      child: Text(
-                        'Name of receiver',
-                      ).regular(fontSize: 16.sp, color: ColorConstants.colorFFFFFF),
+                      child: Text('Name of receiver').regular(
+                        fontSize: 16.sp,
+                        color: ColorConstants.colorFFFFFF,
+                      ),
                     ),
                   ],
                 ),
