@@ -62,6 +62,8 @@ dependencies:
   in_app_purchase: ^3.2.3
   nfc_manager: ^4.1.1
   url_launcher:
+  file_picker: ^10.3.8
+  image_picker: ^1.2.1
 
 
 

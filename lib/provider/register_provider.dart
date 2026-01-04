@@ -71,35 +71,16 @@ class RegisterProvider extends BaseProvider {
       isLoading = false;
       if (model?.status == true) {
         ToastHelper.showMessage(model?.msg ?? '');
-        context.push(AppPaths.verifyOtp, extra: {'type': 1});
-      } else {
-        ToastHelper.showErrorMessage(model?.msg ?? '');
-      }
-    } on FetchDataException catch (e) {
-      // Handle API-side validation error
-      isLoading = false;
-      ToastHelper.showErrorMessage(e.toString());
-    } on SocketException catch (e) {
-      // Handle socket exception (e.g., no internet connection)
-      isLoading = false;
-      ToastHelper.showErrorMessage(e.message.toString());
-    }
-  }
-
-  Future<void> registerApi(BuildContext context) async {
-    try {
-      isLoading = true;
-
-      var model = await api.register(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-      );
-
-      isLoading = false;
-      if (model?.status == true) {
-        context.push(AppPaths.verifyOtp, extra: {'type': 1});
+        context.push(
+          AppPaths.verifyOtp,
+          extra: {
+            'type': 1,
+            'first_name': firstNameController.text.trim(),
+            'last_name': lastNameController.text.trim(),
+            'email': emailController.text.trim(),
+            'password': passwordController.text.trim(),
+          },
+        );
       } else {
         ToastHelper.showErrorMessage(model?.msg ?? '');
       }

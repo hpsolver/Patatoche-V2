@@ -125,7 +125,9 @@ class SelectPhotoVideoView extends StatelessWidget {
                         if (index == 9) {
                           return GestureDetector(
                             key: ValueKey(index),
-                            onTap: () {},
+                            onTap: () {
+                              provider.pickImagesWithLimit(context);
+                            },
                             child: DottedBorder(
                               options: RoundedRectDottedBorderOptions(
                                 radius: Radius.circular(8.r),

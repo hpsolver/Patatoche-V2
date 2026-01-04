@@ -71,7 +71,15 @@ final router = GoRouter(
       name: AppPaths.verifyOtp,
       pageBuilder: (context, state) {
         Map<String, dynamic>? args = state.extra as Map<String, dynamic>?;
-        return MaterialPage(child: VerifyOtpView(type: args?['type']));
+        return MaterialPage(
+          child: VerifyOtpView(
+            type: args?['type'],
+            firstName: args?['first_name'],
+            lastName: args?['last_name'],
+            email: args?['email'],
+            password: args?['password'],
+          ),
+        );
       },
     ),
     GoRoute(
@@ -120,7 +128,7 @@ final router = GoRouter(
       name: AppPaths.resetPassword,
       pageBuilder: (context, state) {
         Map<String, dynamic>? args = state.extra as Map<String, dynamic>?;
-        return MaterialPage(child: ResetPasswordView());
+        return MaterialPage(child: ResetPasswordView(email: args?['email']));
       },
     ),
     GoRoute(

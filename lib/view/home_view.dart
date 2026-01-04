@@ -82,7 +82,10 @@ class HomeView extends StatelessWidget {
               ),
 
               Expanded(
-                child: /*_emptyWidget(context)*/ _patatocheWidget(context,provider),
+                child: /*_emptyWidget(context)*/ _patatocheWidget(
+                  context,
+                  provider,
+                ),
               ),
             ],
           ),
@@ -199,11 +202,7 @@ class HomeView extends StatelessWidget {
                       title: 'add_new'.tr(),
                       fontSize: 14.sp,
                       onClick: () async {
-
-
-                     await   provider.readNfcTag(context);
-
-
+                        await provider.readNfcTag(context);
                       },
                     ),
                   ],

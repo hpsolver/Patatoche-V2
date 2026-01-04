@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/provider/base_provider.dart';
 
+import '../helpers/toast_helper.dart';
 import '../view/activation_code_view.dart';
 import '../view/nfc_scan_view.dart';
 import '../widgets/custom_bottom_sheet.dart';
@@ -25,7 +27,9 @@ class HomeProvider extends BaseProvider {
         NfcAvailability nfcAvailability,
       ) {
         if (nfcAvailability == NfcAvailability.unsupported) {
+          ToastHelper.showErrorMessage('nfc_not_supported'.tr());
         } else if (nfcAvailability == NfcAvailability.disabled) {
+          ToastHelper.showErrorMessage('make_sure_nfc_is_enabled'.tr());
         } else if (nfcAvailability == NfcAvailability.enabled) {
           if (Platform.isAndroid && context.mounted) {
             CustomBottomSheet.show(

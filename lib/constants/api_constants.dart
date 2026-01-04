@@ -6,4 +6,7 @@ class ApiConstants {
   static const String sendRegisterOtp= 'send-register-otp';
   static const String updatePassword = 'update-password';
   static const String getProducts = 'get-products';
+  static const String fpSendOtp = 'fp-send-otp';
+  static const String fpVerifyOtp = 'fp-verify-otp';
+  static const String getUploadUrl = 'get-upload-url';
 }

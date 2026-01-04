@@ -8,12 +8,10 @@ import '../routes.dart';
 import '../services/fetch_data_exception.dart';
 
 class ForgotProvider extends BaseProvider {
-
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
 
   bool _isLoading = false;
-
 
   bool get isLoading => _isLoading;
 
@@ -33,13 +31,17 @@ class ForgotProvider extends BaseProvider {
     try {
       isLoading = true;
 
-      var model = await api.forgotPassword(
+      var model = await api.sendForgotPasswordOtp(
         email: emailController.text.trim(),
       );
 
       isLoading = false;
       if (model?.status == true) {
-        context.push(AppPaths.verifyOtp, extra: {'type': 2});
+        ToastHelper.showMessage(model?.msg ?? '');
+        context.push(
+          AppPaths.verifyOtp,
+          extra: {'type': 2, 'email': emailController.text.trim()},
+        );
       } else {
         ToastHelper.showErrorMessage(model?.msg ?? '');
       }
@@ -53,8 +55,6 @@ class ForgotProvider extends BaseProvider {
       ToastHelper.showErrorMessage(e.message.toString());
     }
   }
-
-
 
   @override
   void dispose() {

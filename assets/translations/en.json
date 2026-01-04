@@ -129,5 +129,6 @@
   "something_went_wrong": "Something went wrong",
   "logout_": "Logout ?",
   "are_you_sure_you_want_to_logout": "Are you sure you want to logout?",
-  "yes": "Yes"
+  "yes": "Yes",
+  "nfc_not_supported": "NFC not supported"
 }

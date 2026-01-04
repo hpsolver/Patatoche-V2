@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/constants/string_constants.dart';
+import 'package:patatoche_v2/enums/view_state.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/provider/otp_provider.dart';
 import 'package:patatoche_v2/routes.dart';
@@ -17,8 +18,19 @@ import '../widgets/image_view.dart';
 
 class VerifyOtpView extends StatefulWidget {
   final int? type;
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? password;
 
-  const VerifyOtpView({super.key, this.type});
+  const VerifyOtpView({
+    super.key,
+    this.type,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.password,
+  });
 
   @override
   VerifyOtpViewState createState() => VerifyOtpViewState();
@@ -39,6 +51,12 @@ class VerifyOtpViewState extends State<VerifyOtpView> {
   Widget build(BuildContext context) {
     return BaseView<OtpProvider>(
       onModelReady: (provider) {
+        provider.setData(
+          firstName: widget.firstName,
+          lastName: widget.lastName,
+          email: widget.email,
+          password: widget.password,
+        );
         provider.startResendTimer();
       },
       builder: (context, provider, _) => Scaffold(
@@ -105,16 +123,21 @@ class VerifyOtpViewState extends State<VerifyOtpView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    provider.start.formatTime(),
-                  ).medium(fontSize: 14.sp, color: ColorConstants.color363636),
+                  provider.start == 0
+                      ? SizedBox()
+                      : Text(provider.start.formatTime()).medium(
+                          fontSize: 14.sp,
+                          color: ColorConstants.color363636,
+                        ),
                   Opacity(
                     opacity: provider.canResend ? 1 : 0.7,
                     child: GestureDetector(
-                      onTap: provider.canResend
+                      onTap:
+                          (provider.canResend &&
+                              provider.state == ViewState.idle)
                           ? () {
                               _otpController.clear();
-                              provider.resendOtp(context);
+                              provider.resendOtp(context, widget.type);
                             }
                           : null,
                       child: Text('resend'.tr()).medium(
@@ -129,11 +152,16 @@ class VerifyOtpViewState extends State<VerifyOtpView> {
               PrimaryButton(
                 width: 1.sw,
                 title: 'confirm'.tr(),
+                isLoading: provider.isLoading,
                 onClick: () {
-                  if (widget.type == 1) {
-                    context.go(AppPaths.dashboard);
-                  } else {
-                    context.pushNamed(AppPaths.resetPassword);
+                  if (_otpController.text.isNotEmpty &&
+                      provider.isLoading &&
+                      _otpController.text.length == 4) {
+                    provider.verifyOtp(
+                      context,
+                      otp: _otpController.text.trim(),
+                      type: widget.type,
+                    );
                   }
                 },
               ),
