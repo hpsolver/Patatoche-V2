@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:patatoche_v2/enums/view_state.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/provider/get_started_provider.dart';
 import 'package:patatoche_v2/routes.dart';
@@ -81,7 +82,9 @@ class GetStartedView extends StatelessWidget {
                           textColor: ColorConstants.colorBCBCBC,
                           title: 'sign_in_with_google'.tr(),
                           onClick: () async {
-                            await provider.googleSignIn();
+                            if (provider.state == ViewState.idle) {
+                              await provider.googleSignIn(context);
+                            }
                           },
                         ),
 
@@ -98,7 +101,9 @@ class GetStartedView extends StatelessWidget {
                                 textColor: ColorConstants.colorFFFFFF,
                                 title: 'sign_in_with_apple'.tr(),
                                 onClick: () async {
-                                  await provider.appleSignIn();
+                                  if (provider.state == ViewState.idle) {
+                                    await provider.appleSignIn();
+                                  }
                                 },
                               ),
                             ],
@@ -145,6 +150,20 @@ class GetStartedView extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            Visibility(
+              visible: provider.state == ViewState.busy,
+              child: Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

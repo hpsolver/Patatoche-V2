@@ -20,6 +20,8 @@ import 'package:patatoche_v2/view/splash_view.dart';
 import 'package:patatoche_v2/view/success_view.dart';
 import 'package:patatoche_v2/view/verify_otp_view.dart';
 
+import 'models/create_memory_model.dart';
+
 final router = GoRouter(
   initialLocation: AppPaths.splash,
   routes: <RouteBase>[
@@ -143,14 +145,18 @@ final router = GoRouter(
       path: AppPaths.createMemory,
       name: AppPaths.createMemory,
       pageBuilder: (context, state) {
-        return MaterialPage(child: CreateMemoryView());
+        Map<String, dynamic>? args = state.extra as Map<String, dynamic>?;
+        return MaterialPage(
+          child: CreateMemoryView(batchId: args?['batch_id']),
+        );
       },
     ),
     GoRoute(
       path: AppPaths.preview,
       name: AppPaths.preview,
       pageBuilder: (context, state) {
-        return MaterialPage(child: PreviewView());
+        CreateMemoryModel model = state.extra as CreateMemoryModel;
+        return MaterialPage(child: PreviewView(model: model));
       },
     ),
     GoRoute(

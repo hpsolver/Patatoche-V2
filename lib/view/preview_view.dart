@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/constants/color_constants.dart';
 import 'package:patatoche_v2/constants/string_constants.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
+import 'package:patatoche_v2/models/create_memory_model.dart';
+import 'package:patatoche_v2/provider/create_memory_provider.dart';
 import 'package:patatoche_v2/provider/preview_provider.dart';
 import 'package:patatoche_v2/routes.dart';
 import 'package:patatoche_v2/view/base_view.dart';
@@ -16,14 +18,19 @@ import '../widgets/audio_wave_player.dart';
 import '../widgets/primary_button.dart';
 
 class PreviewView extends StatelessWidget {
-  const PreviewView({super.key});
+  final CreateMemoryModel model;
+
+  const PreviewView({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     return BaseView<PreviewProvider>(
+      onModelReady: (provider) {
+        provider.createMemoryModel = model;
+      },
       builder: (context, provider, _) => Scaffold(
         extendBody: true,
-        bottomNavigationBar: _submitButton(context),
+        bottomNavigationBar: _submitButton(context, provider),
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -190,7 +197,7 @@ class PreviewView extends StatelessWidget {
     );
   }
 
-  Widget? _submitButton(BuildContext context) {
+  Widget? _submitButton(BuildContext context, PreviewProvider provider) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -208,9 +215,12 @@ class PreviewView extends StatelessWidget {
         bottom: 36.h,
         top: 16.h,
       ),
-      child: PrimaryButton(title: 'submit'.tr(), onClick: () {
-        context.pushNamed(AppPaths.successView);
-      }),
+      child: PrimaryButton(
+        title: 'submit'.tr(),
+        onClick: () async {
+          await provider.saveMedia(context);
+        },
+      ),
     );
   }
 }

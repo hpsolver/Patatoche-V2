@@ -21,7 +21,7 @@ class MembershipPlanView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseView<MembershipPlanProvider>(
       onModelReady: (provider) async {
-        await provider.loadProducts();
+        await provider.loadProducts(context);
       },
       builder: (context, provider, _) => Scaffold(
         body: Container(

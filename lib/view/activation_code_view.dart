@@ -5,20 +5,25 @@ import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/constants/assets_resource.dart';
 import 'package:patatoche_v2/constants/color_constants.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
-import 'package:patatoche_v2/routes.dart';
+import 'package:patatoche_v2/view/base_view.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 import 'package:patatoche_v2/widgets/primary_button.dart';
 
+import '../enums/view_state.dart';
 import '../helpers/common_textfield.dart';
+import '../provider/activation_code_provider.dart';
 
 class ActivationCodeView extends StatefulWidget {
-  const ActivationCodeView({super.key});
+  final String batchCode;
+
+  const ActivationCodeView({super.key, required this.batchCode});
 
   @override
   ActivationCodeViewState createState() => ActivationCodeViewState();
 }
 
 class ActivationCodeViewState extends State<ActivationCodeView> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
 
   @override
@@ -29,64 +34,105 @@ class ActivationCodeViewState extends State<ActivationCodeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 1.sw,
-      padding: EdgeInsets.only(top: 26.h, left: 21.w, right: 21.w),
-      decoration: BoxDecoration(
-        color: ColorConstants.colorFFFFFF,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.r),
-          topRight: Radius.circular(30.r),
+    return BaseView<ActivationCodeProvider>(
+      builder: (context, provider, _) => Padding(
+        // Add bottom padding to avoid keyboard overlap
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 68.w,
-            height: 68.w,
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  ColorConstants.colorFFFFFF,
-                  ColorConstants.colorFFF4E3,
-                ],
-              ),
-              border: Border.all(color: ColorConstants.colorFFECCE, width: 1.w),
+        child: Container(
+          width: 1.sw,
+          padding: EdgeInsets.only(top: 26.h, left: 21.w, right: 21.w),
+          decoration: BoxDecoration(
+            color: ColorConstants.colorFFFFFF,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.r),
+              topRight: Radius.circular(30.r),
             ),
-            child: ImageView(path: AssetsResource.icLock, width: 99.w),
           ),
-          SizedBox(height: 20.h),
-          Text(
-            'activation_code'.tr(),
-          ).medium(fontSize: 16.sp, color: ColorConstants.color363636),
-          SizedBox(height: 12.h),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 68.w,
+                  height: 68.w,
+                  padding: EdgeInsets.all(20.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        ColorConstants.colorFFFFFF,
+                        ColorConstants.colorFFF4E3,
+                      ],
+                    ),
+                    border: Border.all(
+                      color: ColorConstants.colorFFECCE,
+                      width: 1.w,
+                    ),
+                  ),
+                  child: ImageView(path: AssetsResource.icLock, width: 99.w),
+                ),
+                SizedBox(height: 20.h),
+                Text(
+                  'activation_code'.tr(),
+                ).medium(fontSize: 16.sp, color: ColorConstants.color363636),
+                SizedBox(height: 12.h),
 
-          Text('it_printed_on_the_flyer_inside_your_packaging'.tr()).regular(
-            fontSize: 14.sp,
-            color: ColorConstants.color363636,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 12.h),
+                Text(
+                  'it_printed_on_the_flyer_inside_your_packaging'.tr(),
+                ).regular(
+                  fontSize: 14.sp,
+                  color: ColorConstants.color363636,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12.h),
 
-          CommonTextField(
-            controller: _codeController,
-            hintText: 'enter_activation_code'.tr(),
-            textAlign: TextAlign.center,
-          ),
+                CommonTextField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'enter_activation_code'.tr();
+                    }
+                    return null;
+                  },
+                  textInputAction: TextInputAction.go,
+                  textCapitalization: TextCapitalization.characters,
+                  controller: _codeController,
+                  hintText: 'enter_activation_code'.tr(),
+                  textAlign: TextAlign.center,
+                  onFieldSubmitted: (value) async {
+                    if (_formKey.currentState!.validate()) {
+                      await provider.checkActivationCode(
+                        context,
+                        batchCode: widget.batchCode,
+                        activationCode: _codeController.text.trim(),
+                      );
+                    }
+                  },
+                ),
 
-          SizedBox(height: 20.h),
-          PrimaryButton(
-            width: 1.sw,
-            title: 'validate_code'.tr(),
-            onClick: () {
-              context.pushNamed(AppPaths.createMemory);
-            },
+                SizedBox(height: 20.h),
+                PrimaryButton(
+                  width: 1.sw,
+                  isLoading: provider.state == ViewState.busy,
+                  title: 'validate_code'.tr(),
+                  onClick: () async {
+                    if (_formKey.currentState!.validate()) {
+                      context.hideKeyboard();
+                      await provider.checkActivationCode(
+                        context,
+                        batchCode: widget.batchCode,
+                        activationCode: _codeController.text.trim(),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(height: 30.h),
+              ],
+            ),
           ),
-          SizedBox(height: 30.h),
-        ],
+        ),
       ),
     );
   }

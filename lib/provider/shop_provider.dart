@@ -1,13 +1,23 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
-import 'package:patatoche_v2/enums/view_state.dart';
-import 'package:patatoche_v2/provider/base_provider.dart';
+
+import '../enums/view_state.dart';
 import '../helpers/toast_helper.dart';
 import '../models/product_model.dart';
 import '../services/fetch_data_exception.dart';
+import 'base_provider.dart';
 
 class ShopProvider extends BaseProvider {
-  TextEditingController searchController = TextEditingController();
+
+  // Constructor
+  ShopProvider() {
+    searchController.addListener(() {
+      customNotify();
+    });
+  }
+
+  final TextEditingController searchController = TextEditingController();
   Map<String, List<Product>> products = {};
 
   int _selectedIndex = 0;
@@ -26,7 +36,6 @@ class ShopProvider extends BaseProvider {
 
     final entries = products.entries.toList();
 
-    // safety check
     if (_selectedIndex >= entries.length) return [];
 
     final selectedProducts = entries[_selectedIndex].value;
@@ -51,11 +60,9 @@ class ShopProvider extends BaseProvider {
         products = groupByCategory(model?.products ?? []);
       }
     } on FetchDataException catch (e) {
-      // Handle API-side validation error
       setState(ViewState.idle);
       ToastHelper.showErrorMessage(e.toString());
     } on SocketException catch (e) {
-      // Handle socket exception (e.g., no internet connection)
       setState(ViewState.idle);
       ToastHelper.showErrorMessage(e.message.toString());
     }
@@ -72,12 +79,6 @@ class ShopProvider extends BaseProvider {
     }
 
     return categoryMap;
-  }
-
-  void searchListener() {
-    searchController.addListener(() {
-      customNotify();
-    });
   }
 
   @override

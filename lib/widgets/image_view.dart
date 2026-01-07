@@ -41,7 +41,7 @@ class ImageView extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           )),
         ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => Center(child: const Icon(Icons.error)),
       );
     } else if (path.startsWith('assets/')) {
       imageWidget = path.contains(".svg")

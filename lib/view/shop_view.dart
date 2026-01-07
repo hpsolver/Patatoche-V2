@@ -20,7 +20,6 @@ class ShopView extends StatelessWidget {
     return BaseView<ShopProvider>(
       onModelReady: (provider) async {
         await provider.getProducts(context);
-        provider.searchListener();
       },
       builder: (context, provider, _) => Scaffold(
         body: Container(

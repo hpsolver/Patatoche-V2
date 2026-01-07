@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:patatoche_v2/provider/account_settings_provider.dart';
+import 'package:patatoche_v2/provider/activation_code_provider.dart';
 import 'package:patatoche_v2/provider/change_password_provider.dart';
 import 'package:patatoche_v2/provider/contact_us_provider.dart';
+import 'package:patatoche_v2/provider/create_memory_provider.dart';
 import 'package:patatoche_v2/provider/dashboard_provider.dart';
 import 'package:patatoche_v2/provider/forgot_provider.dart';
 import 'package:patatoche_v2/provider/get_started_provider.dart';
@@ -11,12 +13,11 @@ import 'package:patatoche_v2/provider/introduction_provider.dart';
 import 'package:patatoche_v2/provider/language_provider.dart';
 import 'package:patatoche_v2/provider/login_provider.dart';
 import 'package:patatoche_v2/provider/membership_plan_provider.dart';
+import 'package:patatoche_v2/provider/nfc_scan_view_provider.dart';
 import 'package:patatoche_v2/provider/otp_provider.dart';
 import 'package:patatoche_v2/provider/preview_provider.dart';
 import 'package:patatoche_v2/provider/register_provider.dart';
 import 'package:patatoche_v2/provider/reset_password_provider.dart';
-import 'package:patatoche_v2/provider/select_audio_provider.dart';
-import 'package:patatoche_v2/provider/select_photo_video_provider.dart';
 import 'package:patatoche_v2/provider/settings_provider.dart';
 import 'package:patatoche_v2/provider/shop_provider.dart';
 import 'package:patatoche_v2/services/api.dart';
@@ -42,9 +43,10 @@ void setupLocator() {
   locator.registerFactory(() => LanguageProvider());
   locator.registerFactory(() => ResetPasswordProvider());
   locator.registerFactory(() => MembershipPlanProvider());
-  locator.registerFactory(() => SelectPhotoVideoProvider());
-  locator.registerFactory(() => SelectAudioProvider());
+  locator.registerFactory(() => CreateMemoryProvider());
   locator.registerFactory(() => PreviewProvider());
+  locator.registerFactory(() => NfcScanViewProvider());
+  locator.registerFactory(() => ActivationCodeProvider());
 
   locator.registerLazySingleton<Dio>(() {
     Dio dio = Dio();

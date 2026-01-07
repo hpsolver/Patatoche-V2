@@ -130,5 +130,11 @@
   "logout_": "Logout ?",
   "are_you_sure_you_want_to_logout": "Are you sure you want to logout?",
   "yes": "Yes",
-  "nfc_not_supported": "NFC not supported"
+  "nfc_not_supported": "NFC not supported",
+  "this_tag_is_not": "This tag is not compatible with NDEF.",
+  "no_ndef_records": "No NDEF records found on this tag.",
+  "unsupported_record": "Unsupported NDEF record",
+  "please_select_at_least_once_image": "Please select at least once image",
+  "call": "Call",
+  "youhoo": "Youhoo !"
 }

@@ -1,24 +1,5 @@
-class LoginResponse {
-  bool? status;
-  String? msg;
-  Data? data;
-
-  LoginResponse({this.status, this.msg, this.data});
-
-  factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    status: json["status"],
-    msg: json["msg"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "status": status,
-    "msg": msg,
-    "data": data?.toJson(),
-  };
-}
-
-class Data {
+class SocialLoginResponse {
+  bool? success;
   int? userId;
   String? email;
   String? firstName;
@@ -26,7 +7,8 @@ class Data {
   String? membership;
   String? token;
 
-  Data({
+  SocialLoginResponse({
+    this.success,
     this.userId,
     this.email,
     this.firstName,
@@ -35,7 +17,8 @@ class Data {
     this.token,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory SocialLoginResponse.fromJson(Map<String, dynamic> json) => SocialLoginResponse(
+    success: json["success"],
     userId: json["user_id"],
     email: json["email"],
     firstName: json["first_name"],
@@ -45,6 +28,7 @@ class Data {
   );
 
   Map<String, dynamic> toJson() => {
+    "success": success,
     "user_id": userId,
     "email": email,
     "first_name": firstName,

@@ -64,6 +64,10 @@ dependencies:
   url_launcher:
   file_picker: ^10.3.8
   image_picker: ^1.2.1
+  gif_view:
+  nfc_manager_ndef: ^1.1.0
+  ffmpeg_kit_flutter_new: ^4.1.0
+  path_provider:
 
 
 
@@ -105,6 +109,7 @@ flutter:
     - assets/videos/
     - assets/audios/
     - assets/translations/
+    - assets/gif/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

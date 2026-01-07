@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:patatoche_v2/enums/view_state.dart';
 import 'package:patatoche_v2/helpers/shared_pref.dart';
 import 'package:patatoche_v2/provider/base_provider.dart';
 import '../constants/color_constants.dart';
+import '../helpers/toast_helper.dart';
+import '../services/fetch_data_exception.dart';
 
 class MembershipPlanProvider extends BaseProvider {
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -24,10 +27,10 @@ class MembershipPlanProvider extends BaseProvider {
     customNotify();
   }
 
-  Future<void> loadProducts() async {
+  Future<void> loadProducts(BuildContext context) async {
     final available = await _iap.isAvailable();
     if (!available) return;
-    listenToPurchases();
+    listenToPurchases(context);
 
     setState(ViewState.busy);
     final response = await _iap.queryProductDetails(_productIds);
@@ -59,11 +62,11 @@ class MembershipPlanProvider extends BaseProvider {
     await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  void listenToPurchases() {
+  void listenToPurchases(BuildContext context) {
     _subscription = _iap.purchaseStream.listen(
       (purchases) {
         for (final purchase in purchases) {
-          handlePurchase(purchase);
+          handlePurchase(purchase, context);
         }
       },
       onDone: () => _subscription.cancel(),
@@ -73,7 +76,10 @@ class MembershipPlanProvider extends BaseProvider {
     );
   }
 
-  Future<void> handlePurchase(PurchaseDetails purchase) async {
+  Future<void> handlePurchase(
+    PurchaseDetails purchase,
+    BuildContext context,
+  ) async {
     if (purchase.status == PurchaseStatus.purchased ||
         purchase.status == PurchaseStatus.restored) {
       // Unlock feature based on product ID
@@ -88,6 +94,9 @@ class MembershipPlanProvider extends BaseProvider {
           StringConstants.premium,
         );
       }
+
+      // Update membership in backend
+      await updateMembershipApi(context, purchase.productID);
 
       if (purchase.pendingCompletePurchase) {
         await _iap.completePurchase(purchase);
@@ -151,6 +160,32 @@ class MembershipPlanProvider extends BaseProvider {
           ColorConstants.colorFFF0DB,
           ColorConstants.colorFFFFFF.withValues(alpha: .8),
         ];
+    }
+  }
+
+  Future<void> updateMembershipApi(
+    BuildContext context,
+    String membership,
+  ) async {
+    try {
+      int userId = SharedPref.prefs?.getInt(SharedPref.userId) ?? 0;
+
+      Map<String, dynamic> request = {
+        "user_id": userId,
+        "membership": membership,
+      };
+
+      var model = await api.updateProfile(request: request);
+
+      if (model?.success != true) {
+        ToastHelper.showErrorMessage(model?.message ?? '');
+      }
+    } on FetchDataException catch (e) {
+      // Handle API-side validation error
+      ToastHelper.showErrorMessage(e.toString());
+    } on SocketException catch (e) {
+      // Handle socket exception (e.g., no internet connection)
+      ToastHelper.showErrorMessage(e.message.toString());
     }
   }
 

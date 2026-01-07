@@ -1,31 +1,48 @@
 class GetUploadUrlResponse {
   bool? success;
-  String? uploadUrl;
+  Data? data;
+
+  GetUploadUrlResponse({this.success, this.data});
+
+  factory GetUploadUrlResponse.fromJson(Map<String, dynamic> json) =>
+      GetUploadUrlResponse(
+        success: json["success"],
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+      );
+}
+
+class Data {
+  List<Media>? image;
+  List<Media>? video;
+  List<Media>? audio;
+
+  Data({this.image, this.video, this.audio});
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    image: json["image"] == null
+        ? []
+        : List<Media>.from(json["image"]!.map((x) => Media.fromJson(x))),
+    video: json["video"] == null
+        ? []
+        : List<Media>.from(json["video"]!.map((x) => Media.fromJson(x))),
+    audio: json["audio"] == null
+        ? []
+        : List<Media>.from(json["audio"]!.map((x) => Media.fromJson(x))),
+  );
+}
+
+class Media {
   String? fileKey;
+  String? uploadUrl;
   String? fileUrl;
   int? expiresIn;
 
-  GetUploadUrlResponse({
-    this.success,
-    this.uploadUrl,
-    this.fileKey,
-    this.fileUrl,
-    this.expiresIn,
-  });
+  Media({this.fileKey, this.uploadUrl, this.fileUrl, this.expiresIn});
 
-  factory GetUploadUrlResponse.fromJson(Map<String, dynamic> json) => GetUploadUrlResponse(
-    success: json["success"],
-    uploadUrl: json["upload_url"],
+  factory Media.fromJson(Map<String, dynamic> json) => Media(
     fileKey: json["file_key"],
+    uploadUrl: json["upload_url"],
     fileUrl: json["file_url"],
     expiresIn: json["expires_in"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "success": success,
-    "upload_url": uploadUrl,
-    "file_key": fileKey,
-    "file_url": fileUrl,
-    "expires_in": expiresIn,
-  };
 }

@@ -1,55 +1,51 @@
-class LoginResponse {
-  bool? status;
-  String? msg;
+class UpdateProfileResponse {
+  bool? success;
+  String? message;
   Data? data;
 
-  LoginResponse({this.status, this.msg, this.data});
+  UpdateProfileResponse({
+    this.success,
+    this.message,
+    this.data,
+  });
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    status: json["status"],
-    msg: json["msg"],
+  factory UpdateProfileResponse.fromJson(Map<String, dynamic> json) => UpdateProfileResponse(
+    success: json["success"],
+    message: json["message"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "msg": msg,
+    "success": success,
+    "message": message,
     "data": data?.toJson(),
   };
 }
 
 class Data {
   int? userId;
-  String? email;
   String? firstName;
   String? lastName;
   String? membership;
-  String? token;
 
   Data({
     this.userId,
-    this.email,
     this.firstName,
     this.lastName,
     this.membership,
-    this.token,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     userId: json["user_id"],
-    email: json["email"],
     firstName: json["first_name"],
     lastName: json["last_name"],
     membership: json["membership"],
-    token: json["token"],
   );
 
   Map<String, dynamic> toJson() => {
     "user_id": userId,
-    "email": email,
     "first_name": firstName,
     "last_name": lastName,
     "membership": membership,
-    "token": token,
   };
 }

@@ -4,8 +4,8 @@ class CommonResponse {
 
   CommonResponse({this.status, this.msg});
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) =>
-      CommonResponse(status: json["status"], msg: json["msg"]);
-
-  Map<String, dynamic> toJson() => {"status": status, "msg": msg};
+  factory CommonResponse.fromJson(Map<String, dynamic> json) => CommonResponse(
+    status: json["status"] ?? json["success"],
+    msg: json["msg"] ?? json["message"],
+  );
 }
