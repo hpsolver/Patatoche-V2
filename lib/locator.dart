@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:patatoche_v2/provider/account_settings_provider.dart';
 import 'package:patatoche_v2/provider/activation_code_provider.dart';
+import 'package:patatoche_v2/provider/add_spotify_playlist_provider.dart';
 import 'package:patatoche_v2/provider/change_password_provider.dart';
 import 'package:patatoche_v2/provider/contact_us_provider.dart';
 import 'package:patatoche_v2/provider/create_memory_provider.dart';
@@ -47,6 +48,7 @@ void setupLocator() {
   locator.registerFactory(() => PreviewProvider());
   locator.registerFactory(() => NfcScanViewProvider());
   locator.registerFactory(() => ActivationCodeProvider());
+  locator.registerFactory(() => AddSpotifyPlaylistProvider());
 
   locator.registerLazySingleton<Dio>(() {
     Dio dio = Dio();

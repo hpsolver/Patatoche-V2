@@ -6,10 +6,13 @@ import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/models/create_memory_model.dart';
 import 'package:patatoche_v2/provider/create_memory_provider.dart';
 import 'package:patatoche_v2/routes.dart';
+import 'package:patatoche_v2/view/add_spotify_playlist_view.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 import 'package:patatoche_v2/widgets/primary_button.dart';
 import '../constants/assets_resource.dart';
 import '../constants/color_constants.dart';
+import '../widgets/common_dialog_view.dart';
+import '../widgets/custom_bottom_sheet.dart';
 
 class SelectAudioView extends StatelessWidget {
   final CreateMemoryProvider provider;
@@ -78,63 +81,131 @@ class SelectAudioView extends StatelessWidget {
                   ).regular(fontSize: 16.sp, color: ColorConstants.color363636),
 
                   SizedBox(height: 20.h),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        color: ColorConstants.colorBBBBBB,
-                        width: 1.w,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        ImageView(path: AssetsResource.icSpotify),
-                        SizedBox(width: 12.w),
-                        Text('add_spotify_playlist'.tr()).regular(
-                          fontSize: 16.sp,
-                          color: ColorConstants.color363636,
+                  GestureDetector(
+                    onTap: () {
+                      CustomBottomSheet.show(
+                        context: context,
+                        isDismissible: true,
+                        enableDrag: true,
+                        child: AddSpotifyPlaylistView(
+                          spotifyUrl: provider.spotify ?? '',
                         ),
-                      ],
+                      ).then((value) {
+                        if (value != null && value is String) {
+                          provider.setSpotifyUrl(value);
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: ColorConstants.colorBBBBBB,
+                          width: 1.w,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          ImageView(path: AssetsResource.icSpotify),
+                          SizedBox(width: 12.w),
+                          Text('add_spotify_playlist'.tr()).regular(
+                            fontSize: 16.sp,
+                            color: ColorConstants.color363636,
+                          ),
+                          Spacer(),
+
+                          provider.spotify != null &&
+                                  provider.spotify!.isNotEmpty
+                              ? Row(
+                                  children: [
+                                    Text('added'.tr()).medium(
+                                      fontSize: 16.sp,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+
+                                    SizedBox(width: 8.w),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDeletePopUp(context, provider, 1);
+                                      },
+                                      child: ImageView(
+                                        path: AssetsResource.icDelete3,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: 12.h),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        color: ColorConstants.colorBBBBBB,
-                        width: 1.w,
+                  GestureDetector(
+                    onTap: () async {
+                      await provider.pickAudioFile();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 31.w,
-                          height: 31.w,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          child: ImageView(path: AssetsResource.icAudio),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: ColorConstants.colorBBBBBB,
+                          width: 1.w,
                         ),
-                        SizedBox(width: 12.w),
-                        Text('upload_audio_file'.tr()).regular(
-                          fontSize: 16.sp,
-                          color: ColorConstants.color363636,
-                        ),
-                      ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 31.w,
+                            height: 31.w,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: ImageView(path: AssetsResource.icAudio),
+                          ),
+                          SizedBox(width: 12.w),
+                          Text('upload_audio_file'.tr()).regular(
+                            fontSize: 16.sp,
+                            color: ColorConstants.color363636,
+                          ),
+                          Spacer(),
+
+                          provider.audio != null
+                              ? Row(
+                                  children: [
+                                    Text('added'.tr()).medium(
+                                      fontSize: 16.sp,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+
+                                    SizedBox(width: 8.w),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDeletePopUp(context, provider, 2);
+                                      },
+                                      child: ImageView(
+                                        path: AssetsResource.icDelete3,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -179,5 +250,41 @@ class SelectAudioView extends StatelessWidget {
       audio: provider.audio,
     );
     context.pushNamed(AppPaths.preview, extra: model);
+  }
+
+  void showDeletePopUp(
+    BuildContext context,
+    CreateMemoryProvider provider,
+    int type,
+  ) {
+    String title = '';
+    String subTitle = '';
+
+    if (type == 1) {
+      title = 'delete_spotify_playlist'.tr();
+      subTitle = 'are_you_sure_you_want_to_delete_this_spotify_playlist'.tr();
+    } else {
+      title = 'delete_audio'.tr();
+      subTitle = 'are_you_sure_you_want_to_delete_this_audio'.tr();
+    }
+
+    CustomBottomSheet.show(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      child: CommonDialogView(
+        title: title,
+        subTitle: subTitle,
+        icon: AssetsResource.icDelete2,
+        okayButtonText: 'delete'.tr(),
+        okayButtonClick: () {
+          context.pop();
+          provider.deleteAudio(type);
+        },
+        okayTextColor: ColorConstants.colorD1270B,
+        okayButtonColor: ColorConstants.colorFFECEC,
+        okayButtonBorderColor: ColorConstants.colorFFE3DE,
+      ),
+    );
   }
 }

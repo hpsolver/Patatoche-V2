@@ -4,6 +4,7 @@ class MediaModel {
   String? fileKey;
   String? thumbnail;
   int? order;
+  String? type;
 
 
   Future<String?>? thumbnailFuture;
@@ -14,5 +15,6 @@ class MediaModel {
     this.fileKey,
     this.thumbnail,
     this.order,
+    this.type,
   });
 }

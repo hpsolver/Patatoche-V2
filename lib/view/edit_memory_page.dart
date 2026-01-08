@@ -288,7 +288,7 @@ class EditMemoryPageState extends State<EditMemoryPage> {
                   SizedBox(height: 20.h),
 
                   AudioWavePlayer(
-                    assetPath: 'assets/audios/sample_audio.mp3',
+                    filePath: 'assets/audios/sample_audio.mp3',
                     onDeleteTap: () {},
                   ),
                 ],

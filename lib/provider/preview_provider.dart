@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patatoche_v2/models/create_memory_model.dart';
+import 'package:patatoche_v2/models/media_model.dart';
 import 'package:patatoche_v2/provider/base_provider.dart';
 import '../enums/view_state.dart';
 import '../helpers/shared_pref.dart';
@@ -11,7 +12,10 @@ import '../routes.dart';
 import '../services/fetch_data_exception.dart';
 
 class PreviewProvider extends BaseProvider {
+  String? headerImage;
+
   CreateMemoryModel? createMemoryModel;
+  List<MediaModel> mediaList = [];
 
   /// Progress tracking
   int totalFiles = 0;
@@ -43,8 +47,8 @@ class PreviewProvider extends BaseProvider {
 
     totalFiles =
         (memoryModel.images?.length ?? 0) +
-            (memoryModel.videos?.length ?? 0) +
-            (memoryModel.audio != null ? 1 : 0);
+        (memoryModel.videos?.length ?? 0) +
+        (memoryModel.audio != null ? 1 : 0);
 
     customNotify();
 
@@ -53,14 +57,14 @@ class PreviewProvider extends BaseProvider {
     if (memoryModel.images?.isNotEmpty ?? false) {
       request['image'] = {
         'count': memoryModel.images!.length,
-        'file_type': 'image'
+        'file_type': 'image',
       };
     }
 
     if (memoryModel.videos?.isNotEmpty ?? false) {
       request['video'] = {
         'count': memoryModel.videos!.length,
-        'file_type': 'video'
+        'file_type': 'video',
       };
     }
 
@@ -139,7 +143,6 @@ class PreviewProvider extends BaseProvider {
       } else {
         ToastHelper.showErrorMessage(saveRes?.msg ?? '');
       }
-
     } on FetchDataException catch (e) {
       setState(ViewState.idle);
       ToastHelper.showErrorMessage(e.toString());
@@ -164,5 +167,25 @@ class PreviewProvider extends BaseProvider {
       };
     });
   }
-}
 
+  void setData(CreateMemoryModel model) {
+    createMemoryModel = model;
+    loadMedia();
+  }
+
+  void loadMedia() {
+    if (createMemoryModel == null) return;
+    mediaList = [];
+
+    headerImage = createMemoryModel?.images?.first.localPath;
+
+    if (createMemoryModel?.images?.isNotEmpty ?? false) {
+      mediaList.addAll(createMemoryModel!.images!);
+    }
+    if (createMemoryModel?.videos?.isNotEmpty ?? false) {
+      mediaList.addAll(createMemoryModel!.videos!);
+    }
+
+    customNotify();
+  }
+}

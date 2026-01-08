@@ -136,5 +136,13 @@
   "unsupported_record": "Unsupported NDEF record",
   "please_select_at_least_once_image": "Please select at least once image",
   "call": "Call",
-  "youhoo": "Youhoo !"
+  "youhoo": "Youhoo !",
+  "enter_spotify_playlist_url": "Enter spotify playlist url",
+  "invalid_url": "Invalid url",
+  "added": "Added",
+  "spotify_playlist": "Spotify Playlist",
+  "delete_audio": "Delete Audio?",
+  "are_you_sure_you_want_to_delete_this_audio": "Are you sure you want to delete this audio?",
+  "delete_spotify_playlist": "Delete Spotify Playlist?",
+  "are_you_sure_you_want_to_delete_this_spotify_playlist": "Are you sure you want to delete this spotify playlist?"
 }

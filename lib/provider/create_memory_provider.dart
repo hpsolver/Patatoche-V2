@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:patatoche_v2/constants/string_constants.dart';
@@ -47,8 +48,9 @@ class CreateMemoryProvider extends BaseProvider {
 
     if (pickedImages.isEmpty) return;
 
-    final remainingSlots =
-    imageLimit == null ? pickedImages.length : imageLimit! - imagesList.length;
+    final remainingSlots = imageLimit == null
+        ? pickedImages.length
+        : imageLimit! - imagesList.length;
 
     if (remainingSlots <= 0) return;
 
@@ -60,6 +62,7 @@ class CreateMemoryProvider extends BaseProvider {
         return MediaModel(
           localPath: entry.value.path,
           order: startIndex + entry.key,
+          type: 'image',
         );
       }),
     );
@@ -73,8 +76,9 @@ class CreateMemoryProvider extends BaseProvider {
     final pickedVideos = await picker.pickMultiVideo(limit: videoLimit);
     if (pickedVideos.isEmpty) return;
 
-    final remainingSlots =
-    videoLimit == null ? pickedVideos.length : videoLimit! - videosList.length;
+    final remainingSlots = videoLimit == null
+        ? pickedVideos.length
+        : videoLimit! - videosList.length;
 
     if (remainingSlots <= 0) return;
 
@@ -83,9 +87,10 @@ class CreateMemoryProvider extends BaseProvider {
 
     videosList.addAll(
       videosToAdd.asMap().entries.map(
-            (entry) => MediaModel(
+        (entry) => MediaModel(
           localPath: entry.value.path,
           order: startIndex + entry.key,
+          type: 'video',
         ),
       ),
     );
@@ -93,6 +98,27 @@ class CreateMemoryProvider extends BaseProvider {
     customNotify();
   }
 
+  Future<void> pickAudioFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac'],
+      allowMultiple: false,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+
+    final file = result.files.single;
+
+    // Extra safety check
+    final extension = file.extension?.toLowerCase();
+    if (extension == null ||
+        !['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac'].contains(extension)) {
+      return;
+    }
+
+    audio = MediaModel(localPath: file.path!, type: 'audio');
+    customNotify();
+  }
 
   void deleteImage(int index) {
     imagesList.removeAt(index);
@@ -101,6 +127,20 @@ class CreateMemoryProvider extends BaseProvider {
 
   void deleteVideo(index) {
     videosList.removeAt(index);
+    customNotify();
+  }
+
+  void setSpotifyUrl(String value) {
+    spotify = value;
+    customNotify();
+  }
+
+  void deleteAudio(int type) {
+    if (type == 1) {
+      spotify = null;
+    } else {
+      audio = null;
+    }
     customNotify();
   }
 }

@@ -14,6 +14,7 @@ import 'package:patatoche_v2/view/base_view.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
 import 'package:readmore/readmore.dart';
 import '../constants/assets_resource.dart';
+import '../helpers/common_function.dart';
 import '../widgets/audio_wave_player.dart';
 import '../widgets/primary_button.dart';
 
@@ -26,7 +27,7 @@ class PreviewView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseView<PreviewProvider>(
       onModelReady: (provider) {
-        provider.createMemoryModel = model;
+        provider.setData(model);
       },
       builder: (context, provider, _) => Scaffold(
         extendBody: true,
@@ -49,7 +50,9 @@ class PreviewView extends StatelessWidget {
                         bottomRight: Radius.circular(18.r),
                       ),
                       child: ImageView(
-                        path: AssetsResource.placeholder2,
+                        height: 237.h,
+                        width: 1.sw,
+                        path: provider.headerImage??'',
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -74,7 +77,9 @@ class PreviewView extends StatelessWidget {
                             ),
                           ),
 
-                          GestureDetector(
+                          SizedBox(),
+
+                          /*GestureDetector(
                             onTap: () {
                               context.pushNamed(AppPaths.editMemory);
                             },
@@ -82,7 +87,7 @@ class PreviewView extends StatelessWidget {
                               fontSize: 16.sp,
                               color: ColorConstants.colorFFFFFF,
                             ),
-                          ),
+                          ),*/
                         ],
                       ),
                     ),
@@ -93,7 +98,7 @@ class PreviewView extends StatelessWidget {
                   child: Column(
                     children: [
                       ReadMoreText(
-                        '“Someday these will be the good old days”',
+                        '“${model.title?.trim()}”',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20.sp,
@@ -118,9 +123,42 @@ class PreviewView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 17.h),
-                      AudioWavePlayer(
-                        assetPath: 'assets/audios/sample_audio.mp3',
-                      ),
+
+                      model.spotify == null || model.spotify!.isEmpty
+                          ? SizedBox()
+                          : GestureDetector(
+                              onTap: () {
+                                CommonFunction.openUrl("${model.spotify}");
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 17.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 16.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  border: Border.all(
+                                    color: ColorConstants.colorBBBBBB,
+                                    width: 1.w,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    ImageView(path: AssetsResource.icSpotify),
+                                    SizedBox(width: 12.w),
+                                    Text('spotify_playlist'.tr()).regular(
+                                      fontSize: 16.sp,
+                                      color: ColorConstants.color363636,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                      model.audio?.localPath == null
+                          ? SizedBox()
+                          : AudioWavePlayer(filePath: model.audio!.localPath!),
                     ],
                   ),
                 ),
@@ -130,7 +168,7 @@ class PreviewView extends StatelessWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: 8.h,
                   crossAxisSpacing: 8.h,
-                  itemCount: 10,
+                  itemCount: provider.mediaList.length,
                   padding: EdgeInsets.only(
                     left: 20.w,
                     right: 20.w,
@@ -148,7 +186,7 @@ class PreviewView extends StatelessWidget {
                             color: Colors.blue,
                             height: (index % 2 + 1) * 148.h,
                             child: ImageView(
-                              path: AssetsResource.placeholder3,
+                              path: provider.mediaList[index].localPath??'',
                               fit: BoxFit.cover,
                             ),
                           ),

@@ -7,13 +7,12 @@ import 'package:patatoche_v2/constants/assets_resource.dart';
 import 'package:patatoche_v2/constants/color_constants.dart';
 import 'package:patatoche_v2/helpers/extensions.dart';
 import 'package:patatoche_v2/widgets/image_view.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AudioWavePlayer extends StatefulWidget {
-  final String assetPath;
+  final String filePath;
   final VoidCallback? onDeleteTap;
 
-  const AudioWavePlayer({super.key, required this.assetPath, this.onDeleteTap});
+  const AudioWavePlayer({super.key, required this.filePath, this.onDeleteTap});
 
   @override
   State<AudioWavePlayer> createState() => _AudioWavePlayerState();
@@ -30,22 +29,16 @@ class _AudioWavePlayerState extends State<AudioWavePlayer> {
   }
 
   Future<void> _prepare() async {
-    final filePath = await _copyAssetToLocal(widget.assetPath);
+
 
     await _controller.preparePlayer(
-      path: filePath,
+      path: widget.filePath,
       shouldExtractWaveform: true,
       noOfSamples: 120,
     );
   }
 
-  Future<String> _copyAssetToLocal(String assetPath) async {
-    final data = await rootBundle.load(assetPath);
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${assetPath.split('/').last}');
-    await file.writeAsBytes(data.buffer.asUint8List());
-    return file.path;
-  }
+
 
   void _togglePlay() async {
     if (_controller.playerState.isPlaying) {

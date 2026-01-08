@@ -48,4 +48,13 @@ class CommonFunction {
 
     return "${(bytes / math.pow(1024, index)).toStringAsFixed(decimals)} ${units[index]}";
   }
+
+  static bool isValidSpotifyUrl(String url) {
+    // regex covers typical Spotify open URLs
+    final pattern =
+        r'^(https?:\/\/)?(open\.spotify\.com\/(track|album|playlist|artist|show|episode)\/[A-Za-z0-9]+)(\?.*)?$';
+    final regExp = RegExp(pattern);
+
+    return regExp.hasMatch(url.trim());
+  }
 }
